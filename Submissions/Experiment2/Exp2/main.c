@@ -95,3 +95,80 @@ void main(void) {
     // Lock PMM registers for write access
     PMMCTL0_H = 0x00;
 }
+
+uint16_t vbat,ibat;
+float duty = 0.5; /* initial converter duty */
+void main()
+{
+	initialise_msp();
+	while()
+	{
+		adc_results_get(&vbat, &ibat);
+		if(vbat > BATTERY_FLOAT)
+		{
+			/* Battery fully charged. Turn off converter */
+			duty = 0;
+		}
+		else
+		{
+			mppt_algo(vbat, ibat);
+		}
+		converter_duty_set(duty);
+	}
+}
+
+void converter_duty_set(float d)
+{
+	TD0CCR1 = (uint16_t)(duty*(float)TD0CCR0);
+}
+
+void mppt_algo(uint16_t vb, uint16_t ib)
+{
+	static uint32_t power_prev = 0;
+	static float duty_step = 0.05;
+	uint32_t power_new;
+
+	power_new = vb*ib;
+
+	if(power_new > power_prev)
+	{
+		duty = duty + duty_step
+	}
+	else
+	{
+		duty_step = -duty_step;
+		duty = duty + duty_step;
+	}
+
+	/* Limits on duty cycle */
+	if(duty < 0)
+	{
+		duty = 0;
+	}
+	else if(duty > 0.98)
+	{
+		duty = 0.98
+	}
+	power_prev = power_new;
+}
+
+uint16_t volt_counts, current_counts;
+uint32_t power_last = 0;
+float D = 0;
+float duty_step = 0.05;
+void get_max_point()
+{
+	uint32_t power_this;
+
+	power_this = volt_counts * current_counts;
+
+	if(power_this > power_last)
+	{
+		D += duty_step;
+	}
+	else
+	{
+		D = -duty_step;
+		D += duty_step;
+	}
+}
