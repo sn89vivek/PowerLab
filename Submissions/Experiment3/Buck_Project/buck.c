@@ -27,7 +27,7 @@ void pi_init(PI_GRANDO_IQ_CONTROLLER *pi_block)
 	pi_block->param.Kp = _Q(0.1);
 	pi_block->param.Ki = _Q(0.1);
 	pi_block->param.Umax = _Q(0.98);
-	pi_block->param.Umin = _Q(0);
+	pi_block->param.Umin = _Q(0.1);
 
 	pi_block->data.up = _Q(0.0);
 	pi_block->data.ui = _Q(0.0);

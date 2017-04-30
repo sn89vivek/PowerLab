@@ -34,23 +34,50 @@ void timerD_initialise()
     TD0CCTL1 = OUTMOD_7 + CLLD_1;             // CCR1 reset/set
     TD0CCR1 = 6000;                           // CCR1 PWM duty cycle of 1000/2000 = 50%
     TD0CTL0 |= MC_1 + TDCLR;                  // up-mode, clear TDR, Start timer
+
+//	// Configure TimerD in Hi-Res Regulated Mode
+//	TD0CTL0 = TDSSEL_2;                       // TDCLK=SMCLK=25MHz=Hi-Res input clk select
+//	TD0CTL1 |= TDCLKM_1;                      // Select Hi-res local clock
+//	TD0HCTL1 |= TDHCLKCR;					  // High-res clock input >15MHz
+//	TD0HCTL0 = TDHM_0 + 					  // Hi-res clock 8x TDCLK = 200MHz
+//	TDHREGEN + 					  			  // Regulated mode, locked to input clock
+//	TDHEN;     					  			  // Hi-res enable
+//
+//    __delay_cycles(500000);
+//    while(!TDHLKIFG);					      // Wait until hi-res clock is locked
+//
+//	// Configure the CCRx blocks
+//    TD0CCR0 = 6667;                           // PWM Period. So sw freq = 200MHz/6667 = 25 kHz
+//    TD0CCTL1 = OUTMOD_6 + CLLD_1;             // CCR1 toggle/set
+//    TD0CCR1 = 0;              	              // CCR1 PWM duty cycle of 1000/2000 = 50%
+//    TD0CCTL2 = OUTMOD_2 + CLLD_1;             // CCR1 toggle/reset
+//    TD0CCR2 = 0;                 	          // CCR1 PWM duty cycle of 1000/2000 = 50%
+//    TD0CTL0 |= MC_1 + TDCLR;                  // up-mode, clear TDR, Start timer
+//
+//    /* Timer D1 generates a 3840 KHz sampling interrupt */
+//    TD1CCTL0 = CCIE;
+//    TD1CCR0 = 3255;
+//    TD1CTL0 = TDSSEL_2 + MC_1 + TDCLR;			// Clock source 25MHZ (SMCLK)
 }
 
 void timerA_initialise()
 {
-	// Configure TimerA0.0 as ADC conversion tirgger (period ~ 62ms)
-	TA0CCR0 = 31250;                          // PWM Period
-	TA0CCR1 = 31250;
-	TA0CCTL1 = OUTMOD_3;                       // TA0CCR0 toggle
-//	TA0CCTL0 = OUTMOD_4;                       // TA0CCR0 toggle
-//	TA0EX0 = TAIDEX_7;
-	TA0CTL = TASSEL__SMCLK + ID__8 + MC_1 + TACLR;          // SCLK, divide clk_src/8, up mode
+	// Configure TimerA0.0 as ADC conversion trigger (period ~ 62ms)
+	TA0CCR0 = 26042;                           				// PWM Period
+//	TA0CCR1 = 14947;
+//	TA0CCR2 = 11095;
+	TA0CCR1 = 17708;
+	TA0CCR2 = 8333;
+	TA0CCTL1 = OUTMOD_6;                       				// TA1 toggle/set
+	TA0CCTL2 = OUTMOD_2;						    		// TA2 toggle/reset
+	TA0CTL = TASSEL__SMCLK + ID__8 + MC_3 + TACLR;          // SCLK, divide clk_src/8, up_down mode
 }
 
 void adc_configure()
 {
 	// Configure ADC10 - Pulse Sample Mode, TimerA0.0 Trigger
 	ADC10CTL0 = ADC10SHT_3 + ADC10ON + ADC10MSC;         // 32 ADC10CLKs; ADC ON; Single trigger for a sequence
+//	ADC10CTL0 = ADC10SHT_3 + ADC10ON;         // 32 ADC10CLKs; ADC ON; Single trigger for a sequence
 	ADC10CTL1 = ADC10SSEL_0 + ADC10SHP + ADC10SHS_1 + ADC10CONSEQ_3; // TA0.0 trig., rpt sequence of channels
 	ADC10CTL2 |= ADC10RES;                    // 10-bit conversion results
 	ADC10MCTL0 = ADC10SREF_1 + ADC10INCH_2 ; // A10, internal Vref+
@@ -125,6 +152,14 @@ void port_initialise()
     P2DIR |= BIT0;
     P1DIR |= 0x08;				// Set P1.0 to output direction (to drive LED)
     P1OUT |= 0x08;				// Set P1.0  - turn LED on
+
+    /* TA1. Basically left leg top pulse */
+    P3SEL |= BIT6;		// P3.6 to TA0.TA1
+    P3DIR |= BIT6;		// P3.6 output
+
+    /* TA2. Basically right leg top pulse */
+    P3SEL |= BIT5;		// P3.7 to TA0.TA2
+    P3DIR |= BIT5;		// P3.7 output
 }
 
 void msp_initialise()
