@@ -66,8 +66,15 @@ void timerA_initialise()
 	TA0CCR0 = 26042;                           				// PWM Period
 //	TA0CCR1 = 14947;
 //	TA0CCR2 = 11095;
+	// For 152V Input
 	TA0CCR1 = 17708;
 	TA0CCR2 = 8333;
+	// For 180V input
+//	TA0CCR1 = 20255;
+//	TA0CCR2 = 5787;
+	// For 135V input
+	TA0CCR1 = 15753;
+	TA0CCR2 = 10289;
 	TA0CCTL1 = OUTMOD_6;                       				// TA1 toggle/set
 	TA0CCTL2 = OUTMOD_2;						    		// TA2 toggle/reset
 	TA0CTL = TASSEL__SMCLK + ID__8 + MC_3 + TACLR;          // SCLK, divide clk_src/8, up_down mode
@@ -144,12 +151,11 @@ void msp_power_clk_init()
 
 void port_initialise()
 {
+	/* Buck PWM */
     P1SEL |= BIT6;				// Set P1.6 to output direction (Timer D0.0 output)
     P1DIR |= BIT6;
-    P1SEL |= BIT7;				// Set P1.7 to output direction (Timer D0.1 output)
-    P1DIR |= BIT7;
-    P2SEL |= BIT0;				// Set P2.0 to output direction (Timer D0.2 output)
-    P2DIR |= BIT0;
+
+    /* LED GPIO */
     P1DIR |= 0x08;				// Set P1.0 to output direction (to drive LED)
     P1OUT |= 0x08;				// Set P1.0  - turn LED on
 
@@ -160,6 +166,12 @@ void port_initialise()
     /* TA2. Basically right leg top pulse */
     P3SEL |= BIT5;		// P3.7 to TA0.TA2
     P3DIR |= BIT5;		// P3.7 output
+
+    /* Not USED */
+    P1SEL |= BIT7;				// Set P1.7 to output direction (Timer D0.1 output)
+    P1DIR |= BIT7;
+    P2SEL |= BIT0;				// Set P2.0 to output direction (Timer D0.2 output)
+    P2DIR |= BIT0;
 }
 
 void msp_initialise()

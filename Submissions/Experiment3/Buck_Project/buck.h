@@ -41,15 +41,16 @@ typedef struct {
 
 extern PI_GRANDO_IQ_CONTROLLER vpv_control;
 
-#define NO_OF_SWEEP_POINTS			35
-#define MPPT_STEP_TIMEOUT_COUNTS	300
+#define NO_OF_SWEEP_POINTS			45
+#define MPPT_STEP_TIMEOUT_COUNTS	250
 #define MPPT_SWEEP_TIMEOUT_COUNTS	30000
 //#define MPPT_SWEEP_TIMEOUT_COUNTS	18000
 //#define MPPT_SWEEP_TIMEOUT_COUNTS	10000
 //#define Q_NORM_MPP_START_VOLTAGE	_Q(0.62)  	//  15
-//#define Q_NORM_MPP_START_VOLTAGE	_Q(0.587) 	//  14.1
-#define Q_NORM_MPP_START_VOLTAGE	_Q(0.55)	//  14.0
-#define Q_NORM_MPP_STEP_VOLTAGE		_Q(0.004)
+//#define Q_NORM_MPP_START_VOLTAGE	_Q(0.55)	//  14.0
+#define Q_NORM_MPP_START_VOLTAGE	_Q(0.587) 	//  14.1
+//#define Q_NORM_MPP_STEP_VOLTAGE		_Q(0.004)
+#define Q_NORM_MPP_STEP_VOLTAGE		_Q(0.002)
 
 typedef struct {
 	int32_t mppt_sweep_timer;

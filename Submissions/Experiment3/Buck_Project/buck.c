@@ -20,7 +20,8 @@ void pi_init(PI_GRANDO_IQ_CONTROLLER *pi_block)
 	// cal_ref = 1.2*Vref/11.2/2.5
 //	pi_block->term.Ref=_Q(0.6830);
 //	pi_block->term.Ref=_Q(0.715);
-	pi_block->term.Ref= Q_NORM_MPP_START_VOLTAGE;
+//	pi_block->term.Ref= Q_NORM_MPP_START_VOLTAGE;
+	pi_block->term.Ref= _Q(0.62);
 	pi_block->term.Fbk=0;
 	pi_block->term.Out=0;
 
@@ -59,7 +60,7 @@ void pi_controller(PI_GRANDO_IQ_CONTROLLER *v, int16_t fbk)
 void mpp_block_init(mppt_block_t *mpp)
 {
 	mpp->mppt_step_timer = MPPT_STEP_TIMEOUT_COUNTS;
-	mpp->mppt_sweep_timer = MPPT_SWEEP_TIMEOUT_COUNTS;
+	mpp->mppt_sweep_timer = MPPT_SWEEP_TIMEOUT_COUNTS/5;
 	mpp->mppt_norm_vstart = Q_NORM_MPP_START_VOLTAGE;
 	mpp->mppt_norm_vstep = Q_NORM_MPP_STEP_VOLTAGE;
 	mpp->mppt_pow_idx = 0;
